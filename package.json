@@ -1,0 +1,29 @@
+{
+  "name": "erd-designer",
+  "version": "1.0.0",
+  "description": "ERD Designer by Redone - Database Schema Designer Tool",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "build": "echo 'No build step required for static site'",
+    "start": "python -m http.server 8000"
+  },
+  "keywords": [
+    "erd",
+    "database",
+    "schema",
+    "designer",
+    "entity-relationship",
+    "diagram"
+  ],
+  "author": "Redone",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/erd-designer.git"
+  },
+  "homepage": "https://erd-designer.vercel.app",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ERD Designer by Redone - Aplikasi web untuk mendesain Entity Relationship Diagram (ERD) yang intuitif dan mudah digunakan">
+    <meta name="keywords" content="ERD, Entity Relationship Diagram, Database Design, Schema Designer, Database Tool">
+    <meta name="author" content="Redone">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://erd-designer.vercel.app/">
+    <meta property="og:title" content="ERD Designer by Redone - Database Schema Designer">
+    <meta property="og:description" content="Aplikasi web untuk mendesain Entity Relationship Diagram (ERD) yang intuitif dan mudah digunakan">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://erd-designer.vercel.app/">
+    <meta property="twitter:title" content="ERD Designer by Redone - Database Schema Designer">
+    <meta property="twitter:description" content="Aplikasi web untuk mendesain Entity Relationship Diagram (ERD) yang intuitif dan mudah digunakan">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📊%3C/text%3E%3C/svg%3E">
+    
+    <title>ERD Designer by Redone - Database Schema Designer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>ERD Designer by Redone</h1>
+                <div class="project-info">
+                    <span class="project-label">Project:</span>
+                    <span id="projectName" class="project-name">Untitled Project</span>
+                </div>
+            </div>
+            <div class="toolbar">
+                <button id="newProjectBtn" class="btn btn-info">
+                    <span class="icon">📝</span> New
+                </button>
+                <button id="saveProjectBtn" class="btn btn-success">
+                    <span class="icon">💾</span> Save
+                </button>
+                <button id="loadProjectBtn" class="btn btn-info">
+                    <span class="icon">📂</span> Load
+                </button>
+                <div class="toolbar-separator"></div>
+                <button id="addTableBtn" class="btn btn-primary">
+                    <span class="icon">+</span> Tambah Tabel
+                </button>
+                <button id="exportBtn" class="btn btn-secondary">
+                    <span class="icon">📄</span> Export
+                </button>
+                <button id="clearBtn" class="btn btn-danger">
+                    <span class="icon">🗑️</span> Clear All
+                </button>
+                <div class="toolbar-separator"></div>
+                <div class="zoom-controls">
+                    <button id="zoomOutBtn" class="btn btn-secondary zoom-btn">
+                        <span class="icon">🔍-</span>
+                    </button>
+                    <span id="zoomLevel" class="zoom-level">100%</span>
+                    <button id="zoomInBtn" class="btn btn-secondary zoom-btn">
+                        <span class="icon">🔍+</span>
+                    </button>
+                    <button id="resetZoomBtn" class="btn btn-secondary zoom-btn">
+                        <span class="icon">⌂</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Tabel</h3>
+                    <div id="tableList" class="table-list">
+                        <p class="empty-state">Belum ada tabel. Klik "Tambah Tabel" untuk memulai.</p>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3>Relasi</h3>
+                    <div id="relationList" class="relation-list">
+                        <p class="empty-state">Belum ada relasi.</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Canvas Area -->
+            <main class="canvas-container">
+                <div id="canvas" class="canvas">
+                    <div class="canvas-grid"></div>
+                    <svg id="relationSvg" class="relation-svg"></svg>
+                    <div id="tablesContainer" class="tables-container"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal untuk Tambah/Edit Tabel -->
+    <div id="tableModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Tambah Tabel Baru</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="tableForm">
+                    <div class="form-group">
+                        <label for="tableName">Nama Tabel:</label>
+                        <input type="text" id="tableName" required placeholder="Masukkan nama tabel">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Kolom:</label>
+                        <div id="columnsContainer">
+                            <!-- Kolom akan ditambahkan di sini -->
+                        </div>
+                        <button type="button" id="addColumnBtn" class="btn btn-small">+ Tambah Kolom</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancelBtn" class="btn btn-secondary">Batal</button>
+                <button type="button" id="saveTableBtn" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Relasi -->
+    <div id="relationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Buat Relasi</h2>
+                <button class="close-btn" id="closeRelationModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="relationForm">
+                    <div class="form-group">
+                        <label for="fromTable">Dari Tabel:</label>
+                        <select id="fromTable" required>
+                            <option value="">Pilih tabel...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fromColumn">Kolom:</label>
+                        <select id="fromColumn" required>
+                            <option value="">Pilih kolom...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="toTable">Ke Tabel:</label>
+                        <select id="toTable" required>
+                            <option value="">Pilih tabel...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="toColumn">Kolom Tujuan:</label>
+                        <select id="toColumn" required>
+                            <option value="">Pilih kolom...</option>
+                        </select>
+                        <small style="color: #6b7280; font-style: italic;">Tipe data kolom sumber akan otomatis disesuaikan dengan kolom tujuan</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="relationType">Tipe Relasi:</label>
+                        <select id="relationType" required>
+                            <option value="one-to-one">One to One</option>
+                            <option value="one-to-many">One to Many</option>
+                            <option value="many-to-many">Many to Many</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancelRelationBtn" class="btn btn-secondary">Batal</button>
+                <button type="button" id="saveRelationBtn" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
